@@ -77,14 +77,14 @@ public class Rf2IdUuidCacheArfGenMojo extends AbstractMojo
 
 
 	/**
-	 * Default value SNOMED Core
+	 * Path on which to load data. Default value SNOMED Core
 	 */
 	//TODO ask Keith how we handle path for this now... 
 	@Parameter(required = false, defaultValue = "8c230474-9f11-30ce-9cad-185a96fd03a2") 
-	private UUID uuidPath;
+	private UUID pathUUID;
 	public void setUuidPath(String uuidStr)
 	{
-		uuidPath = UUID.fromString(uuidStr);
+		pathUUID = UUID.fromString(uuidStr);
 	}
 	/**
 	 * Enable storing an in-memory map from UUIDs to SCTIDs. May not always be necessary - set to false to reduce memory usage.
@@ -146,7 +146,7 @@ public class Rf2IdUuidCacheArfGenMojo extends AbstractMojo
 			try (BufferedWriter bwIdArf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(arfOutput), "UTF-8")))
 			{
 				getLog().info("::: Assigned SCTID/UUID ARF output: " + arfOutput);
-				Sct2_IdRecord.parseIdsToArf(filesIn, bwIdArf, idLookup, uuidPath, uuidAuthor);
+				Sct2_IdRecord.parseIdsToArf(filesIn, bwIdArf, idLookup, pathUUID, uuidAuthor);
 				bwIdArf.flush();
 				bwIdArf.close();
 			}
