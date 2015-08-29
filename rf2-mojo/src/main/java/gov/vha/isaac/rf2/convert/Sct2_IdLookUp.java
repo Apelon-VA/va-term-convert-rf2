@@ -16,18 +16,16 @@
 package gov.vha.isaac.rf2.convert;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,22 +40,19 @@ public class Sct2_IdLookUp {
     private long sctIdArray[];
     private long uuidMsbArray[];
     private long uuidLsbArray[];
-    BufferedWriter uuidsWriter;
-    protected File additionalUuidsFile;
+//    private BufferedWriter uuidsWriter;
+//    private File additionalUuidsFile;
     private HashMap<UUID, Long> UUIDtoSCTMap = null;
+    private ArrayList<Long> additionalIDs = new ArrayList<>();
 
-    public Sct2_IdLookUp(String filePathName, boolean enableUUIDtoSCTMap)
-            throws IOException {
-        int indexOf = filePathName.indexOf("target");
-        String uuidsFileName = filePathName.substring(0, indexOf);
-        uuidsFileName = uuidsFileName + "/target/input-files/generated-arf/additional.txt";
-        additionalUuidsFile = new File(uuidsFileName);
-        FileOutputStream uuidsOs = new FileOutputStream(additionalUuidsFile);
-        uuidsWriter = new BufferedWriter(new OutputStreamWriter(uuidsOs, "UTF8"));
+    public Sct2_IdLookUp(File idCacheFile, boolean enableUUIDtoSCTMap) throws IOException {
+//        additionalUuidsFile = new File(arfOutPath, "additional.txt");
+//        FileOutputStream uuidsOs = new FileOutputStream(additionalUuidsFile);
+//        uuidsWriter = new BufferedWriter(new OutputStreamWriter(uuidsOs, "UTF8"));
         
         ArrayList<Sct2_IdCompact> idList = new ArrayList<>();
         ObjectInputStream ois;
-        ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filePathName)));
+        ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(idCacheFile)));
         try {
             Object obj;
             while ((obj = ois.readObject()) != null) {
@@ -83,6 +78,10 @@ public class Sct2_IdLookUp {
         }
         setupArrays(idList);
     }
+    
+    public List<Long> getAdditionalIDs() {
+        return additionalIDs;
+    }
 
     private void setupArrays(ArrayList<Sct2_IdCompact> idList) throws IOException {
         int countSctDuplicates = 0;
@@ -97,11 +96,12 @@ public class Sct2_IdLookUp {
                 idList.remove(i);
                 Sct2_IdCompact sct = tempIdList.remove(i);
                 i--;
-                uuidsWriter.write(sct.toString());
+                additionalIDs.add(sct.sctId_);
+//                uuidsWriter.write(sct.toString());
             }
         }
-        uuidsWriter.flush();
-        uuidsWriter.close();
+//        uuidsWriter.flush();
+//        uuidsWriter.close();
         sb.append("\r\n::: countSctDuplicates = ");
         sb.append(countSctDuplicates);
         sb.append("\r\n::: countSctPairUuidChanged = ");

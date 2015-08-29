@@ -27,7 +27,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,10 +41,9 @@ import org.apache.maven.plugin.MojoFailureException;
  *
  * @author marc campbell
  */
-public class Sct2_IdRecord implements Serializable {
+public class Sct2_IdRecord {
 
     private static Logger LOG = LogManager.getLogger();
-    private static final long serialVersionUID = 1L;
     protected static final String LINE_TERMINATOR = "\r\n";
     protected static final String TAB_CHARACTER = "\t";
     // RECORD FILES
@@ -76,7 +74,7 @@ public class Sct2_IdRecord implements Serializable {
      * @return
      * @throws Exception
      */
-    public static void parseToIdPreCacheFile(List<Rf2File> fList, String idCacheOutputPathFnameStr)
+    public static void parseToIdPreCacheFile(List<Rf2File> fList, File idCacheOutputPathFname)
             throws MojoFailureException {
         // SNOMED CT UUID scheme
         try {
@@ -89,10 +87,9 @@ public class Sct2_IdRecord implements Serializable {
             Set<Long> dateTimeSet = new HashSet<>();
             Set<Long> moduleIdSet = new HashSet<>();
             try (ObjectOutputStream oos = new ObjectOutputStream(
-                    new BufferedOutputStream(
-                            new FileOutputStream(idCacheOutputPathFnameStr)))) {
+                    new BufferedOutputStream(new FileOutputStream(idCacheOutputPathFname)))) {
                         // open searchable text file
-                        File txtFile = new File(idCacheOutputPathFnameStr + ".txt");
+                        File txtFile = new File(idCacheOutputPathFname.getParentFile(), idCacheOutputPathFname.getName() + ".txt");
                         BufferedWriter bw = new BufferedWriter(new FileWriter(txtFile));
                         bw.append("SCT");
                         bw.append(TAB_CHARACTER);
@@ -250,13 +247,14 @@ public class Sct2_IdRecord implements Serializable {
             int MODULE_ID = 4; // moduleSctId 900000000000207008
             int REFERENCED_COMPONENT_ID = 5; // referencedComponentId 100000000
             HashSet<String> additionalIds = new HashSet<>();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(idLookUp.additionalUuidsFile), "UTF-8"));
-            String line = reader.readLine();
-            while (line != null) {
-                additionalIds.add(line.split("\t")[0]);
-                line = reader.readLine();
-            }
-            reader.close();
+            idLookUp.getAdditionalIDs().forEach(id -> additionalIds.add(id + ""));
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(idLookUp.additionalUuidsFile), "UTF-8"));
+//            String line = reader.readLine();
+//            while (line != null) {
+//                additionalIds.add(line.split("\t")[0]);
+//                line = reader.readLine();
+//            }
+//            reader.close();
             for (Rf2File f : fList) {
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(

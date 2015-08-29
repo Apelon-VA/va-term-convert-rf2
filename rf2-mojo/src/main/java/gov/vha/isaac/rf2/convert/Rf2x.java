@@ -26,32 +26,26 @@ import java.util.UUID;
 
 public class Rf2x {
 
-    private static final String FILE_SEPARATOR = File.separator;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String cachePath = null;
     private static Sct2_IdLookUp sctid2UuidCache = null;
     private static long notMappedCounter;
 
     public Rf2x() {
-        cachePath = null;
         sctid2UuidCache = null;
     }
 
-    public static void setupIdCache(String targetPath, boolean enableUUIDtoSCTIDMap) 
+    public static void setupIdCache(File idCacheFile, boolean enableUUIDtoSCTIDMap) 
             throws IOException {
-        cachePath = targetPath + FILE_SEPARATOR + "id-cache" + FILE_SEPARATOR + "idSctUuidCache.ser";
-        System.out.println(":::INFO: checking SCTID/UUID cache file location ...");
-        System.out.println(":::      idCachePath=" + cachePath);
-        File file = new File(cachePath);
-        System.out.println(":::      " + file.getAbsolutePath());
-        if (!file.exists()) {
+
+        System.out.println(":::      " + idCacheFile.getAbsolutePath());
+        if (!idCacheFile.exists()) {
             System.out.println(":::      SCTID/UUID cache file does not exist!!!@!");
             // Initialize with an empty id list
             sctid2UuidCache = new Sct2_IdLookUp(new ArrayList<Sct2_IdCompact>(), enableUUIDtoSCTIDMap);
             notMappedCounter = 0;
         } else {
             System.out.println(":::      SCTID/UUID cache file exists!!!@!");
-            sctid2UuidCache = new Sct2_IdLookUp(file.getAbsolutePath(), enableUUIDtoSCTIDMap);
+            sctid2UuidCache = new Sct2_IdLookUp(idCacheFile, enableUUIDtoSCTIDMap);
             notMappedCounter = 0;
         }
     }

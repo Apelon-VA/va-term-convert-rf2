@@ -137,14 +137,12 @@ public class Rf2File implements Comparable<Object> {
         }
     }
 
-    public static List<Rf2File> getFiles(String wDir, String subDir, String rootDir,
-            String prefix, String postfix) throws ParseException {
+    public static List<Rf2File> getFiles(File rootDir, String prefix, String postfix) throws ParseException {
 
         ArrayList<Rf2File> listOfFiles = new ArrayList<>();
 
-        File f1 = new File(new File(wDir, subDir), rootDir);
         ArrayList<File> fv = new ArrayList<>();
-        listFilesRecursive(fv, f1, prefix, postfix);
+        listFilesRecursive(fv, rootDir, prefix, postfix);
 
         File[] files = new File[0];
         files = fv.toArray(files);
@@ -162,15 +160,13 @@ public class Rf2File implements Comparable<Object> {
         return listOfFiles;
     }
 
-    public static List<Rf2File> getFiles(String wDir, String subDir, String rootDir,
-            String infix, String postfix, Date dateStart, Date dateStop) throws ParseException,
+    public static List<Rf2File> getFiles(File rootDir, String infix, String postfix, Date dateStart, Date dateStop) throws ParseException,
             MojoFailureException {
 
         ArrayList<Rf2File> listOfFiles = new ArrayList<>();
 
-        File f1 = new File(new File(wDir, subDir), rootDir);
         ArrayList<File> fv = new ArrayList<>();
-        listFilesRecursive(fv, f1, infix, postfix);
+        listFilesRecursive(fv, rootDir, infix, postfix);
 
         File[] files = new File[0];
         files = fv.toArray(files);
