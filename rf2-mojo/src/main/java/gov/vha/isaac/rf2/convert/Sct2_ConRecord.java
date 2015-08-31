@@ -24,48 +24,37 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.maven.plugin.MojoFailureException;
 
-public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable {
+public class Sct2_ConRecord implements Comparable<Sct2_ConRecord>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String LINE_TERMINATOR = "\r\n";
     private static final String TAB_CHARACTER = "\t";
-    private long desSnoIdL; // DESCRIPTIONID
-    private String desUuidStr; // id
+    // RECORD FIELDS
+    private long conSnoIdL; //  id
     private String effDateStr; // effectiveTime
-    private long timeL;
-    private boolean isActive; // STATUS
-    private long statusConceptL; // extended from AttributeValue file
-    private String conUuidStr; // CONCEPTID
-    private String termText; // TERM
-    private boolean capStatus; // INITIALCAPITALSTATUS -- capitalization
-    private String descriptionTypeStr; // DESCRIPTIONTYPE
-    private String languageCodeStr; // LANGUAGECODE
+    long timeL;
+    boolean isActive; // CONCEPTSTATUS
+    boolean isPrimitiveB; // ISPRIMITIVE
+    long statusConceptL; // extended from AttributeValue file
+
     private String pathUuidStr; // SNOMED Core default
     // String authorUuidStr; // saved as user
     private String moduleUuidStr;
 
-    public Sct2_DesRecord(long dId, String dateStr, boolean activeB, String moduleUuidStr,
-            String conUuidStr, String termStr,
-            boolean capitalization, String desTypeStr, String langCodeStr,
-            long statusConceptL, String pathUuid)
-            throws ParseException, IOException {
-        setDesSnoIdL(dId);
-        // UUID tmpUUID = Type3UuidFactory.fromSNOMED(desSnoIdL);
-        UUID tmpUUID = Rf2x.convertSctIdToUuid(getDesSnoIdL());
-        this.desUuidStr = tmpUUID.toString();
-        this.setEffDateStr(dateStr);
+    public Sct2_ConRecord(long conIdL, String dateStr, boolean active, String moduleUuidStr,
+            boolean isPrim, long statusConceptL, String pathUuid) throws ParseException {
+        this.setConSnoIdL(conIdL); // column 0 - id
+        this.setEffDateStr(dateStr); // column 1 - effectiveTime
         this.timeL = Rf2x.convertDateToTime(dateStr);
-        this.isActive = activeB;
+        this.isActive = active; // column 2 - active
 
-        this.conUuidStr = conUuidStr; // CONCEPTID
 
-        this.termText = termStr; // TERM
-        this.capStatus = capitalization; // INITIALCAPITALSTATUS -- capitalization
-        this.descriptionTypeStr = desTypeStr; // DESCRIPTIONTYPE
-        this.languageCodeStr = langCodeStr; // LANGUAGECODE
+        // column 4 - defintionStatusId converted to isPrimative
+        this.isPrimitiveB = isPrim;
 
         this.statusConceptL = statusConceptL;
 
@@ -75,31 +64,23 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
         this.setModuleUuidStr(moduleUuidStr);
     }
 
-    public Sct2_DesRecord(Sct2_DesRecord in, long time, long status)
-            throws ParseException {
-        this.setDesSnoIdL(in.getDesSnoIdL());
-        this.desUuidStr = in.desUuidStr;
+    public Sct2_ConRecord(Sct2_ConRecord in, long time, long status) throws ParseException {
+        this.setConSnoIdL(in.getConSnoIdL());
         this.setEffDateStr(in.getEffDateStr());
         this.timeL = time;
         this.isActive = in.isActive;
+        this.isPrimitiveB = in.isPrimitiveB;
 
-        this.conUuidStr = in.conUuidStr; // CONCEPTID
-
-        this.termText = in.termText; // TERM
-        this.capStatus = in.capStatus; // INITIALCAPITALSTATUS -- capitalization
-        this.descriptionTypeStr = in.descriptionTypeStr; // DESCRIPTIONTYPE
-        this.languageCodeStr = in.languageCodeStr; // LANGUAGECODE
+        this.statusConceptL = status;
 
         this.setPathUuidStr(in.getPathUuidStr());
         // this.authorUuidStr = in.authorUuidStr;
         this.setModuleUuidStr(in.getModuleUuidStr());
-
-        this.statusConceptL = status;
     }
 
-    public static Sct2_DesRecord[] attachStatus(Sct2_DesRecord[] a, Rf2_RefsetCRecord[] b)
+    public static Sct2_ConRecord[] attachStatus(Sct2_ConRecord[] a, Rf2_RefsetCRecord[] b)
             throws ParseException, MojoFailureException {
-        ArrayList<Sct2_DesRecord> addedRecords = new ArrayList<>();
+        ArrayList<Sct2_ConRecord> addedRecords = new ArrayList<>();
         Rf2_RefsetCRecord zeroB = new Rf2_RefsetCRecord("ZERO", "2000-01-01 00:00:00", false,
                 null, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE);
 
@@ -108,11 +89,11 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
 
         int idxA = 0;
         int idxB = 0;
-        long currentId = a[0].getDesSnoIdL();
+        long currentId = a[0].getConSnoIdL();
         while (idxA < a.length) {
-            ArrayList<Sct2_DesRecord> listA = new ArrayList<>();
+            ArrayList<Sct2_ConRecord> listA = new ArrayList<>();
             ArrayList<Rf2_RefsetCRecord> listB = new ArrayList<>();
-            while (idxA < a.length && a[idxA].getDesSnoIdL() == currentId) {
+            while (idxA < a.length && a[idxA].getConSnoIdL() == currentId) {
                 listA.add(a[idxA]);
                 idxA++;
             }
@@ -151,10 +132,10 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
                         }
                     } else {
                         if (listB.get(idxBB).isActive) {
-                            addedRecords.add(new Sct2_DesRecord(listA.get(idxAA),
+                            addedRecords.add(new Sct2_ConRecord(listA.get(idxAA),
                                     listB.get(idxBB).timeL, listB.get(idxBB).valueIdL));
                         } else {
-                            addedRecords.add(new Sct2_DesRecord(listA.get(idxAA),
+                            addedRecords.add(new Sct2_ConRecord(listA.get(idxAA),
                                     listB.get(idxBB).timeL, Long.MAX_VALUE));
                         }
                     }
@@ -175,7 +156,7 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
 
             // NEXT ID
             if (idxA < a.length) {
-                currentId = a[idxA].getDesSnoIdL();
+                currentId = a[idxA].getConSnoIdL();
             }
             if (idxB < b.length) {
                 while (idxB < b.length && b[idxB].referencedComponentIdL < currentId) {
@@ -198,21 +179,16 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
         return a;
     }
 
-    static private Sct2_DesRecord[] removeDuplicates(Sct2_DesRecord[] a)
-            throws MojoFailureException {
+    static private Sct2_ConRecord[] removeDuplicates(Sct2_ConRecord[] a) throws MojoFailureException {
         Arrays.sort(a);
 
         // REMOVE DUPLICATES
         int lenA = a.length;
         ArrayList<Integer> duplIdxList = new ArrayList<>();
         for (int idx = 0; idx < lenA - 2; idx++) {
-            if ((a[idx].getDesSnoIdL() == a[idx + 1].getDesSnoIdL())
+            if ((a[idx].getConSnoIdL() == a[idx + 1].getConSnoIdL())
+                    && (a[idx].isPrimitiveB == a[idx + 1].isPrimitiveB)
                     && (a[idx].statusConceptL == a[idx + 1].statusConceptL)
-                    && (a[idx].capStatus == a[idx + 1].capStatus)
-                    && (a[idx].conUuidStr.compareToIgnoreCase(a[idx + 1].conUuidStr) == 0)
-                    && (a[idx].termText.compareTo(a[idx + 1].termText) == 0)
-                    && (a[idx].descriptionTypeStr.compareToIgnoreCase(a[idx + 1].descriptionTypeStr) == 0)
-                    && (a[idx].languageCodeStr.compareTo(a[idx + 1].languageCodeStr) == 0)
                     && a[idx].getModuleUuidStr().equalsIgnoreCase(a[idx + 1].getModuleUuidStr())) {
                 if (a[idx].statusConceptL == Long.MAX_VALUE) {
                     if (a[idx].isActive == a[idx + 1].isActive) {
@@ -223,8 +199,10 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
                 }
             }
         }
-        if (duplIdxList.size() > 0) {
-            Sct2_DesRecord[] b = new Sct2_DesRecord[lenA - duplIdxList.size()];
+
+        if (duplIdxList.size()
+                > 0) {
+            Sct2_ConRecord[] b = new Sct2_ConRecord[lenA - duplIdxList.size()];
             int aPos = 0;
             int bPos = 0;
             int len;
@@ -242,80 +220,58 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
         }
     }
 
-    public static Sct2_DesRecord[] parseDescriptions(Rf2File f, String pathUuid)
-            throws IOException, ParseException {
+    public static Sct2_ConRecord[] parseConcepts(Rf2File f, String pathUuid) throws MojoFailureException {
+        try {
+            int count = Rf2File.countFileLines(f);
+            Sct2_ConRecord[] a = new Sct2_ConRecord[count];
 
-        int count = Rf2File.countFileLines(f);
-        Sct2_DesRecord[] a = new Sct2_DesRecord[count];
+            // DATA COLUMNS
+            int ID = 0;// id
+            int EFFECTIVE_TIME = 1; // effectiveTime
+            int ACTIVE = 2; // active
+            int MODULE_ID = 3; // moduleId
+            int DEFINITION_STATUS_ID = 4; // definitionStatusId
 
-        // DATA COLUMNS
-        int ID = 0; // id
-        int EFFECTIVE_TIME = 1; // effectiveTime
-        int ACTIVE = 2; // active
-        int MODULE_ID = 3; // moduleId
-        int CONCEPT_ID = 4; // conceptId
-        int LANGUAGE_CODE = 5; // languageCodeStr
-        int TYPE_ID = 6; // typeId
-        int TERM = 7; // term
-        int CASE_SIGNIFICANCE_ID = 8; // caseSignificanceId
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(f.getFile()), "UTF-8"));
 
-        BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f.getFile()), "UTF-8"));
+            int idx = 0;
+            br.readLine(); // Header row
+            while (br.ready()) {
+                String[] line = br.readLine().split(TAB_CHARACTER);
 
-        int idx = 0;
-        r.readLine();  // Header row
-        while (r.ready()) {
-            String[] line = r.readLine().split(TAB_CHARACTER);
+                a[idx] = new Sct2_ConRecord(Long.parseLong(line[ID]),
+                        Rf2x.convertEffectiveTimeToDate(line[EFFECTIVE_TIME]),
+                        Rf2x.convertStringToBoolean(line[ACTIVE]),
+                        Rf2x.convertSctIdToUuidStr(line[MODULE_ID]),
+                        Rf2x.convertDefinitionStatusToIsPrimitive(line[DEFINITION_STATUS_ID]),
+                        Long.MAX_VALUE,
+                        pathUuid);
+                idx++;
+            }
 
-            a[idx] = new Sct2_DesRecord(Long.parseLong(line[ID]),
-                    Rf2x.convertEffectiveTimeToDate(line[EFFECTIVE_TIME]),
-                    Rf2x.convertStringToBoolean(line[ACTIVE]),
-                    Rf2x.convertSctIdToUuidStr(line[MODULE_ID]),
-                    Rf2x.convertSctIdToUuidStr(line[CONCEPT_ID]),
-                    line[TERM],
-                    Rf2x.convertCaseSignificanceIdToCapStatus(line[CASE_SIGNIFICANCE_ID]),
-                    Rf2x.convertSctIdToUuidStr(line[TYPE_ID]),
-                    line[LANGUAGE_CODE],
-                    Long.MAX_VALUE,
-                    pathUuid);
-            idx++;
+            return a;
+
+        } catch (ParseException | IOException ex) {
+            Logger.getLogger(Sct2_ConRecord.class.getName()).log(Level.SEVERE, null, ex);
+            throw new MojoFailureException(
+                    "error parsing rf2 concepts", ex);
         }
-
-        return a;
-    }
-
-    // Create string to show some input fields for exception reporting
-    // DESCRIPTIONID DESCRIPTIONSTATUS CONCEPTID TERM INITIALCAPITALSTATUS DESCRIPTIONTYPE LANGUAGECODE
-    public static String toStringHeader() {
-        return "DESCRIPTIONID" + TAB_CHARACTER
-                + "DESCRIPTIONSTATUS" + TAB_CHARACTER
-                + "CONCEPTID" + TAB_CHARACTER
-                + "TERM" + TAB_CHARACTER
-                + "INITIALCAPITALSTATUS" + TAB_CHARACTER
-                + "DESCRIPTIONTYPE" + TAB_CHARACTER
-                + "LANGUAGECODE";
     }
 
     // Create string to show some input fields for exception reporting
     @Override
     public String toString() {
-        return desUuidStr + TAB_CHARACTER 
-                + isActive + TAB_CHARACTER
-                + conUuidStr + TAB_CHARACTER
-                + termText + TAB_CHARACTER
-                + capStatus + TAB_CHARACTER
-                + descriptionTypeStr + TAB_CHARACTER
-                + languageCodeStr;
+        return getConSnoIdL() + TAB_CHARACTER + isActive + TAB_CHARACTER + isPrimitiveB;
     }
 
     public void setPath(String pathStr) {
         this.setPathUuidStr(pathStr);
     }
     
-    public void writeArf(BufferedWriter writer)
-            throws IOException, ParseException {
-        // Description UUID
-        // writer.append(desUuidStr + TAB_CHARACTER);
-        writer.append(Rf2x.convertSctIdToUuidStr(getDesSnoIdL()) + TAB_CHARACTER);
+    public void writeArf(BufferedWriter writer) throws IOException, ParseException {
+        // Concept UUID
+        writer.append(Rf2x.convertSctIdToUuidStr(getConSnoIdL()) + TAB_CHARACTER);
 
         // Status UUID
         if (statusConceptL < Long.MAX_VALUE) {
@@ -324,26 +280,14 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
             writer.append(Rf2x.convertActiveToStatusUuid(isActive) + TAB_CHARACTER);
         }
 
-        // Concept UUID
-        writer.append(conUuidStr + TAB_CHARACTER);
-
-        // Term
-        writer.append(termText + TAB_CHARACTER);
-
-        // Capitalization Status
-        if (capStatus) {
+        // Primitive string 0 (false == defined) or 1 (true == primitive)
+        if (isPrimitiveB) {
             writer.append("1" + TAB_CHARACTER);
         } else {
             writer.append("0" + TAB_CHARACTER);
         }
 
-        // Description Type UUID
-        writer.append(descriptionTypeStr + TAB_CHARACTER);
-
-        // Language Code
-        writer.append(languageCodeStr + TAB_CHARACTER);
-
-        // Effective Date   yyyy-MM-dd HH:mm:ss
+        // Effective Date yyyy-MM-dd HH:mm:ss
         writer.append(Rf2x.convertTimeToDate(timeL) + TAB_CHARACTER);
 
         // Path UUID String
@@ -357,10 +301,10 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
     }
 
     @Override
-    public int compareTo(Sct2_DesRecord t) {
-        if (this.getDesSnoIdL() < t.getDesSnoIdL()) {
+    public int compareTo(Sct2_ConRecord t) {
+        if (this.getConSnoIdL() < t.getConSnoIdL()) {
             return -1; // instance less than received
-        } else if (this.getDesSnoIdL() > t.getDesSnoIdL()) {
+        } else if (this.getConSnoIdL() > t.getConSnoIdL()) {
             return 1; // instance greater than received
         } else {
             if (this.timeL < t.timeL) {
@@ -372,14 +316,14 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
         return 0; // instance == received
     }
 
-    public long getDesSnoIdL()
+    public String getPathUuidStr()
     {
-        return desSnoIdL;
+        return pathUuidStr;
     }
 
-    public void setDesSnoIdL(long desSnoIdL)
+    public void setPathUuidStr(String pathUuidStr)
     {
-        this.desSnoIdL = desSnoIdL;
+        this.pathUuidStr = pathUuidStr;
     }
 
     public String getEffDateStr()
@@ -392,14 +336,14 @@ public class Sct2_DesRecord implements Comparable<Sct2_DesRecord>, Serializable 
         this.effDateStr = effDateStr;
     }
 
-    public String getPathUuidStr()
+    public long getConSnoIdL()
     {
-        return pathUuidStr;
+        return conSnoIdL;
     }
 
-    public void setPathUuidStr(String pathUuidStr)
+    public void setConSnoIdL(long conSnoIdL)
     {
-        this.pathUuidStr = pathUuidStr;
+        this.conSnoIdL = conSnoIdL;
     }
 
     public String getModuleUuidStr()

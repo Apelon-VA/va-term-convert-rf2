@@ -32,19 +32,19 @@ import org.apache.maven.plugin.MojoFailureException;
 
 public class Rf2File implements Comparable<Object> {
 
-    File file;
-    Date revDate;
-    long time;
+    private File file;
+    private Date revDate;
+    private long time;
 
     public Rf2File(File f, Date d) {
-        this.file = f;
+        this.setFile(f);
         this.revDate = d;
         this.time = d.getTime();
     }
 
     @Override
     public String toString() {
-        return file.getPath();
+        return getFile().getPath();
     }
 
     @Override
@@ -58,18 +58,18 @@ public class Rf2File implements Comparable<Object> {
         BufferedReader br = null;
 
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(rf1.file), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(rf1.getFile()), "UTF-8"));
             try {
                 while (br.readLine() != null) {
                     lineCount++;
                 }
             } catch (IOException ex) {
-                throw new IOException("FAILED: error counting lines in " + rf1.file, ex);
+                throw new IOException("FAILED: error counting lines in " + rf1.getFile(), ex);
             } finally {
                 br.close();
             }
         } catch (IOException ex) {
-            throw new IOException("FAILED: error open BufferedReader for " + rf1.file, ex);
+            throw new IOException("FAILED: error open BufferedReader for " + rf1.getFile(), ex);
         }
 
         // lineCount NOTE: COUNT -1 BECAUSE FIRST LINE SKIPPED
@@ -208,4 +208,14 @@ public class Rf2File implements Comparable<Object> {
             }
         }
     }
+
+	public File getFile()
+	{
+		return file;
+	}
+
+	public void setFile(File file)
+	{
+		this.file = file;
+	}
 }

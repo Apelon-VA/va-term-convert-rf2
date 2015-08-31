@@ -26,10 +26,10 @@ import static gov.vha.isaac.rf2.convert.Sct2_IdRecord.TAB_CHARACTER;
 public class Sct2_IdCompact implements Comparable<Sct2_IdCompact>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    public long uuidMsb_;
-    public long uuidLsb_;
-    public long sctId_;
-    public long time_;
+    private long uuidMsb_;
+    private long uuidLsb_;
+    private long sctId_;
+    private long time_;
 
     public Sct2_IdCompact(long uuidMsbL, long uuidLsbL, long sctIdL, long time) {
         this.uuidMsb_ = uuidMsbL;
@@ -77,6 +77,26 @@ public class Sct2_IdCompact implements Comparable<Sct2_IdCompact>, Serializable 
         sb.append(time_);
         sb.append(LINE_TERMINATOR);
         return sb.toString();
+    }
+
+    public long getUuidMsb()
+    {
+        return uuidMsb_;
+    }
+
+    public long getUuidLsb()
+    {
+        return uuidLsb_;
+    }
+
+    public long getSctId()
+    {
+        return sctId_;
+    }
+
+    public long getTime()
+    {
+        return time_;
     }
 
 }
