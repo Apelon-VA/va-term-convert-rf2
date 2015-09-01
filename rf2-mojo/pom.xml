@@ -65,24 +65,8 @@
 		</dependency>
 	</dependencies>
 	
-	
-
 	<build>
 		<plugins>
-			<plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m4.3</version>
-                <configuration>
-                    <pushReleases>true</pushReleases>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <scmCommentPrefix>[jgitflow-plugin]</scmCommentPrefix>
-                    <enableSshAgent>true</enableSshAgent>
-                    <allowSnapshots>true</allowSnapshots>
-                    <enableFeatureVersions>true</enableFeatureVersions>
-                </configuration>
-            </plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
