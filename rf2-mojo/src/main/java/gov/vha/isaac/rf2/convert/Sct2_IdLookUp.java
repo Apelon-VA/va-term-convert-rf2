@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,15 +41,10 @@ public class Sct2_IdLookUp {
     private long sctIdArray[];
     private long uuidMsbArray[];
     private long uuidLsbArray[];
-//    private BufferedWriter uuidsWriter;
-//    private File additionalUuidsFile;
     private HashMap<UUID, Long> UUIDtoSCTMap = null;
-    private ArrayList<Long> additionalIDs = new ArrayList<>();
+    private HashMap<Long, HashSet<Sct2_IdCompact>> additionalIDs = new HashMap<>();
 
     public Sct2_IdLookUp(File idCacheFile, boolean enableUUIDtoSCTMap) throws IOException {
-//        additionalUuidsFile = new File(arfOutPath, "additional.txt");
-//        FileOutputStream uuidsOs = new FileOutputStream(additionalUuidsFile);
-//        uuidsWriter = new BufferedWriter(new OutputStreamWriter(uuidsOs, "UTF8"));
         
         ArrayList<Sct2_IdCompact> idList = new ArrayList<>();
         ObjectInputStream ois;
@@ -79,7 +75,11 @@ public class Sct2_IdLookUp {
         setupArrays(idList);
     }
     
-    public List<Long> getAdditionalIDs() {
+    public Collection<Long> getAdditionalIDs() {
+        return additionalIDs.keySet();
+    }
+    
+    public HashMap<Long, HashSet<Sct2_IdCompact>> getAdditionalIDRecords() {
         return additionalIDs;
     }
 
@@ -91,17 +91,19 @@ public class Sct2_IdLookUp {
         Collections.sort(idList); // required for binarySearch
         Collections.sort(tempIdList);
         for (int i = 0; i < tempIdList.size() - 1; i++) {
-            if (tempIdList.get(i).sctId_ == tempIdList.get(i + 1).sctId_) {
+            if (tempIdList.get(i).getSctId() == tempIdList.get(i + 1).getSctId()) {
                 //remove and write to additional ids file
                 idList.remove(i);
                 Sct2_IdCompact sct = tempIdList.remove(i);
                 i--;
-                additionalIDs.add(sct.sctId_);
-//                uuidsWriter.write(sct.toString());
+                HashSet<Sct2_IdCompact> entries = additionalIDs.get(sct.getSctId());
+                if (entries == null) {
+                    entries = new HashSet<>();
+                    additionalIDs.put(sct.getSctId(), entries);
+                }
+                entries.add(sct);
             }
         }
-//        uuidsWriter.flush();
-//        uuidsWriter.close();
         sb.append("\r\n::: countSctDuplicates = ");
         sb.append(countSctDuplicates);
         sb.append("\r\n::: countSctPairUuidChanged = ");
@@ -116,11 +118,11 @@ public class Sct2_IdLookUp {
         this.uuidLsbArray = new long[idList.size()];
         for (int i = 0; i < idList.size(); i++) {
             Sct2_IdCompact sct2_IdCompact = idList.get(i);
-            this.sctIdArray[i] = sct2_IdCompact.sctId_;
-            this.uuidMsbArray[i] = sct2_IdCompact.uuidMsb_;
-            this.uuidLsbArray[i] = sct2_IdCompact.uuidLsb_;
+            this.sctIdArray[i] = sct2_IdCompact.getSctId();
+            this.uuidMsbArray[i] = sct2_IdCompact.getUuidMsb();
+            this.uuidLsbArray[i] = sct2_IdCompact.getUuidLsb();
             if (UUIDtoSCTMap != null) {
-                UUIDtoSCTMap.put(new UUID(sct2_IdCompact.uuidMsb_, sct2_IdCompact.uuidLsb_), sct2_IdCompact.sctId_);
+                UUIDtoSCTMap.put(new UUID(sct2_IdCompact.getUuidMsb(), sct2_IdCompact.getUuidLsb()), sct2_IdCompact.getSctId());
             }
         }
     }

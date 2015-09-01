@@ -58,7 +58,7 @@ public class Rf2x {
      * @param effectiveTimeStr
      * @return
      */
-    static String convertEffectiveTimeToDate(String effectiveTimeStr) {
+    public static String convertEffectiveTimeToDate(String effectiveTimeStr) {
         return effectiveTimeStr.substring(0, 4) + "-"
                 + effectiveTimeStr.substring(4, 6) + "-"
                 + effectiveTimeStr.substring(6, 8)
@@ -121,7 +121,7 @@ public class Rf2x {
      * @throws IOException
      * @throws TerminologyException
      */
-    static String convertActiveToStatusUuid(boolean active) throws IOException {
+    public static String convertActiveToStatusUuid(boolean active) throws IOException {
         if (active) {
             // return ArchitectonicAuxiliary.Concept.CURRENT.getPrimoridalUid().toString();
             return "d12702ee-c37f-385f-a070-61d56d4d0f1f"; // RF2 Active
@@ -158,7 +158,7 @@ public class Rf2x {
         return convertSctIdToUuidStr(id);
     }
 
-    static String convertSctIdToUuidStr(long id) 
+    public static String convertSctIdToUuidStr(long id) 
             throws IOException {
         return convertSctIdToUuid(id).toString();
     }
@@ -173,8 +173,7 @@ public class Rf2x {
         if (uuid == null) {
             notMappedCounter++;
             if (notMappedCounter % 100000 == 1) {
-                System.out.println(":::INFO: UUID notMappedCounter=" + notMappedCounter 
-                        + " SCTID=" + Long.toString(id));
+                System.out.println(":::INFO: UUID notMappedCounter=" + notMappedCounter + " SCTID=" + Long.toString(id));
             }
             return UuidT3Generator.fromSNOMED(id);                    
         } else {
@@ -193,7 +192,7 @@ public class Rf2x {
     }
     
        
-    static boolean isSctIdInUuidCache(long sctId) throws IOException {
+    public static boolean isSctIdInUuidCache(long sctId) throws IOException {
         UUID uuid;
         if (sctid2UuidCache == null) {
             throw new IOException("Rf2x.setupIdCache(path) needs to be called first");

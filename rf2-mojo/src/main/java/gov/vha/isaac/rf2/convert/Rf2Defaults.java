@@ -16,6 +16,8 @@
 package gov.vha.isaac.rf2.convert;
 
 import java.util.UUID;
+import org.ihtsdo.otf.tcc.api.metadata.binding.TermAux;
+import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
 
 /**
  *
@@ -24,14 +26,11 @@ import java.util.UUID;
 public class Rf2Defaults {
 
     // Default value from Terminology Auxiliary concept --> user
-    private static final String authorUuidStr = "f7495b58-6630-3499-a44e-2052b5fcf06c";
-    // Default value from TkRevision.unspecifiedModuleUuid
-    private static final String moduleUuidStr = "40d1c869-b509-32f8-b735-836eac577a67";
+    private static final String authorUuidStr = IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid().toString();
 
-    private static final String pathSnomedCoreUuidStr = "8c230474-9f11-30ce-9cad-185a96fd03a2";
+    private static final String pathSnomedCoreUuidStr = IsaacMetadataAuxiliaryBinding.DEVELOPMENT.getPrimodialUuid().toString();
 
     private static UUID authorUuid = null;
-    private static UUID moduleUuid = null;
     private static UUID pathSnomedCoreUuid = null;
 
     public static UUID getAuthorUuid() {
@@ -43,17 +42,6 @@ public class Rf2Defaults {
 
     public static String getAuthorUuidStr() {
         return authorUuidStr;
-    }
-
-    public static UUID getModuleUuid() {
-        if (moduleUuid == null) {
-            moduleUuid = UUID.fromString(moduleUuidStr);
-        }
-        return moduleUuid;
-    }
-
-    public static String getModuleUuidStr() {
-        return moduleUuidStr;
     }
 
     public static UUID getPathSnomedCoreUuid() {

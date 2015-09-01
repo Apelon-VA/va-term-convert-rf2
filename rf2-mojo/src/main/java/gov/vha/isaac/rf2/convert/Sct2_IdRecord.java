@@ -105,9 +105,7 @@ public class Sct2_IdRecord {
                         int MODULE_ID = 4;
                         int REFERENCED_COMPONENT_ID = 5;
                         for (Rf2File f : fList) {
-                            BufferedReader br = new BufferedReader(
-                                    new InputStreamReader(
-                                            new FileInputStream(f.file), "UTF-8"));
+                            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f.getFile()), "UTF-8"));
                             br.readLine();
                             countNonActiveL = 0;
                             countNonComputedIdsL = 0;
@@ -149,7 +147,7 @@ public class Sct2_IdRecord {
                                 // Computed uuid
                                 long sctIdL = Long.parseLong(line[REFERENCED_COMPONENT_ID]);
                                 UUID cUuid = UUID.fromString(
-                                		UuidT3Generator.fromSNOMED(sctIdL).toString());
+                                        UuidT3Generator.fromSNOMED(sctIdL).toString());
                                 // UUID cUuid = UUID.fromString(Rf2x.convertSctIdToUuidStr(sctIdL));
                                 if (aUuid.compareTo(cUuid) != 0) {
                                     countNonComputedIdsL++;
@@ -165,7 +163,7 @@ public class Sct2_IdRecord {
 
                                 // Write to TEXT file
                                 StringBuilder sb = new StringBuilder();
-                                sb.append(tempIdCompact.sctId_);
+                                sb.append(tempIdCompact.getSctId());
                                 sb.append(TAB_CHARACTER);
                                 sb.append(cUuid);
                                 sb.append(TAB_CHARACTER);
@@ -176,7 +174,7 @@ public class Sct2_IdRecord {
                             StringBuilder sb = new StringBuilder();
                             sb.append("\n::: parseToIdPreCacheFile(..) ");
                             sb.append("\n::: PARSED & WRITTEN TO ID CACHE: ");
-                            sb.append(f.file.toURI().toString());
+                            sb.append(f.getFile().toURI().toString());
                             if (idSchemeSet.size() > 0) {
                                 Long[] idSchemeArray = idSchemeSet.toArray(new Long[0]);
                                 for (Long long1 : idSchemeArray) {
@@ -258,7 +256,7 @@ public class Sct2_IdRecord {
             for (Rf2File f : fList) {
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(
-                                new FileInputStream(f.file), "UTF-8"));
+                                new FileInputStream(f.getFile()), "UTF-8"));
 
                 // Header row
                 br.readLine();
@@ -304,7 +302,7 @@ public class Sct2_IdRecord {
                 }
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n::: parseIdsToArf() FILE: ");
-                sb.append(f.file.toURI().toString());
+                sb.append(f.getFile().toURI().toString());
                 LOG.info(sb.toString());
                 br.close();
             }
