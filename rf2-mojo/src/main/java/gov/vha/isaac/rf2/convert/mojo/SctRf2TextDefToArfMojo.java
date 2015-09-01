@@ -54,7 +54,7 @@ public class SctRf2TextDefToArfMojo extends BaseRF2Mojo
 			// Create multiple directories
 
 			BufferedWriter bwIds = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(arfOutPath, "ids_textdefinitions.txt")), "UTF-8"));
-			getLog().info("::: IDS OUTPUT: " + new File(arfOutPath, "ids_textdefinitions").getAbsolutePath());
+			getLog().info("::: IDS OUTPUT: " + new File(arfOutPath, "ids_textdefinitions.txt").getAbsolutePath());
 
 			// :NYI: extended status implementation does not multiple version years
 			filesInStatus = Rf2File.getFiles(new File(new File(inputSctDir, "Refset"), "Content"), "AttributeValue", ".txt");
@@ -63,7 +63,7 @@ public class SctRf2TextDefToArfMojo extends BaseRF2Mojo
 			// TEXTDEFINITION FILES "sct2_TextDefinition"
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(arfOutPath, "descriptions_textdefinitions_rf2.txt")),
 					"UTF-8"));
-			getLog().info("::: TEXTDEFINITIONS FILE: " + new File(arfOutPath, "textdefinitions_rf2.txt").getAbsolutePath());
+			getLog().info("::: TEXTDEFINITIONS FILE: " + new File(arfOutPath, "descriptions_textdefinitions_rf2.txt").getAbsolutePath());
 			filesIn = Rf2File.getFiles(inputSctDir, "sct2_TextDefinition", ".txt");
 			for (Rf2File rf2File : filesIn)
 			{

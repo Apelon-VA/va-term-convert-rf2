@@ -117,8 +117,9 @@
 							<goal>sct-rf2-uuid-cache-arf-gen</goal>  <!-- This does nothing? -->
 							<goal>sct-rf2-text-definition-to-arf</goal>
 							<goal>sct-rf2-to-arf</goal>
-							<goal>sct-rf2-to-arf-no-status</goal><!-- overwrites previous? -->
+							<goal>sct-rf2-to-arf-no-status</goal> <!-- overwrites previous? -->
 							<goal>sct-rf2-simple-to-arf</goal>  <!-- This does nothing? -->
+							<goal>sct-rf2-dos-to-arf</goal>
 						</goals>
 						<configuration>
 							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
@@ -127,7 +128,7 @@
 					<execution>
 						<id>sct-rf2 conversion second steps</id>
 						<goals>
-							<goal>sct-rf2-refset-c-to-arf</goal>  <!-- This does nothing? -->
+							<goal>sct-rf2-refset-c-to-arf</goal>  <!-- Does nothing... -->
 						</goals>
 						<configuration>
 							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
@@ -144,9 +145,9 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>sct-rf2-conversion third steps</id>
+						<id>sct-rf2-conversion third steps</id> 
 						<goals>
-							<goal>sct-rf2-lrs-to-arf</goal>  <!-- This does nothing? -->
+							<goal>sct-rf2-lrs-to-arf</goal> <!-- does nothing -->
 						</goals>
 						<configuration>
 							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>

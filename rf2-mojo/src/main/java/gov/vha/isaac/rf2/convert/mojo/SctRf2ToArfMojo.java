@@ -167,7 +167,7 @@ public class SctRf2ToArfMojo extends BaseRF2Mojo {
         // PRIMARY_UUID = 0;
         writer.append(Rf2x.convertSctIdToUuidStr(sctId) + TAB_CHARACTER);
         // SOURCE_SYSTEM_UUID = 1;
-        writer.append(IsaacMetadataAuxiliaryBinding.SIGNED_INTEGER.getPrimodialUuid().toString() + TAB_CHARACTER);
+        writer.append(IsaacMetadataAuxiliaryBinding.SNOMED_INTEGER_ID.getPrimodialUuid().toString() + TAB_CHARACTER);
         // ID_FROM_SOURCE_SYSTEM = 2;
         writer.append(Long.toString(sctId) + TAB_CHARACTER);
         // STATUS_UUID = 3;

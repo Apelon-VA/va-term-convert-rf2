@@ -79,6 +79,7 @@ import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
 import gov.vha.isaac.ochre.util.UuidT3Generator;
 import gov.vha.isaac.ochre.util.UuidT5Generator;
 import gov.vha.isaac.rf2.convert.Sct2_IdCompact;
+import gov.vha.isaac.rf2.convert.Sct2_IdLookUp;
 import gov.vha.isaac.rf2.convert.sct1.Sct1Dir;
 import gov.vha.isaac.rf2.convert.sct1.Sct1_ConRecord;
 import gov.vha.isaac.rf2.convert.sct1.Sct1_DesRecord;
@@ -304,6 +305,14 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
     public void setUuidUserSnorocket(String uuidStr) {
         uuidUserSnorocket = UUID.fromString(uuidStr);
     }
+    
+	/**
+	 * Directory used for intermediate serialized sct/uuid mapping cache
+	 */
+	@Parameter(required = true, defaultValue = "id-cache") 
+	protected String idCacheDir = "";
+    
+    
     private String scratchDirectory = FILE_SEPARATOR + "tmp_steps";
     private static final String REL_ID_NAMESPACE_UUID_TYPE1 = "84fd0460-2270-11df-8a39-0800200c9a66";
 //
@@ -792,40 +801,13 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
             }
         }
 
-        additionalIds = new HashMap<>();
+        File idCacheFile = new File(new File(targetDirectory, idCacheDir), "idSctUuidCache.ser");
+
         try {
-            File additionalIdsFile = new File(targetDir + File.separatorChar + "input-files"+ File.separatorChar + File.separatorChar + arfInputDir + File.separatorChar + "additional.txt");
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(additionalIdsFile),"UTF-8"));
-            int sctId = 0;
-            int lsb = 1;
-            int msb = 2;
-            int time = 3;
-            String line = br.readLine();
-            while (line != null) {
-                String[] parts = line.split("\t");
-                if(additionalIds.containsKey(Long.parseLong(parts[sctId]))){
-                    additionalIds.get(Long.parseLong(parts[sctId])).add(new Sct2_IdCompact(
-                        Long.parseLong(parts[msb]), 
-                        Long.parseLong(parts[lsb]), 
-                        Long.parseLong(parts[sctId]), 
-                        Long.parseLong(parts[time]))
-                    );
-                }else{
-                    HashSet<Sct2_IdCompact> ids = new HashSet<>();
-                    ids.add(new Sct2_IdCompact(
-                        Long.parseLong(parts[msb]), 
-                        Long.parseLong(parts[lsb]), 
-                        Long.parseLong(parts[sctId]), 
-                        Long.parseLong(parts[time])));
-                    additionalIds.put(Long.parseLong(parts[sctId]),ids);
-                }
-                line = br.readLine();
-            }
-            br.close();
-        } catch (FileNotFoundException ex) {
-            LOG.error(ex);
-        } catch (IOException ex) {
-            LOG.error(ex);
+        additionalIds = new Sct2_IdLookUp(idCacheFile, false).getAdditionalIDRecords();
+        LOG.info("Read " + additionalIds.size() + " additional IDs");
+        } catch (Exception ex) {
+            LOG.error("Error reading additional ids", ex);
         }
         arfInputDir = arfInputDir.replace('/', File.separatorChar);
         getLog().info("POM ARF Input Directory = " + arfInputDir);
