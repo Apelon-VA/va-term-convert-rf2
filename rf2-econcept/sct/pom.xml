@@ -6,7 +6,7 @@
 	<artifactId>term-convert-rf2-econcept-sct</artifactId>
 	<!-- this should be set to ${sourceData.version}-loader-${loader.version} but that doesn't appease the maven gods that know best....
 		will leave it as is for now, and ignore the warnings. -->
-	<version>${sourceData.version}-loader-${loader.version}</version>
+	<version>${sourceData.version}-loader-${loader.version}</version>  <!-- Put D, F or S here, if necessary, to get around maven rules when trying to reuse this pom to post snapshot and full, for example. -->
 	<packaging>pom</packaging>
 
 	<name>RF2 eConcept Artifact Generator</name>
