@@ -47,7 +47,8 @@ public class SctRf2LrsToArfMojo extends BaseRF2Mojo
             // LANGUAGE REFSET FILES "der2_cRefset_Language"
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(arfOutPath, "concept_language_rf2.refset")), "UTF-8"));
             getLog().info("::: LANGUAGE REFSET FILE: " + new File(arfOutPath, "concept_language_rf2.refset").getAbsolutePath());
-            filesIn = Rf2File.getFiles(inputSctDir, "der2_cRefset_ExtensionLanguage", ".txt");
+            filesIn = Rf2File.getFiles(inputSctDir, "der2_cRefset_Language", ".txt");
+            filesIn.addAll(Rf2File.getFiles(inputSctDir, "der2_cRefset_ExtensionLanguage", ".txt"));
             for (Rf2File rf2File : filesIn)
             {
                 Rf2_RefsetCRecord[] members = Rf2_RefsetCRecord.parseRefset(rf2File, null);

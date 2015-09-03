@@ -523,7 +523,7 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
             return 0;
         }
         else {
-            throw new RuntimeException("Bad assumption!");
+            throw new RuntimeException("Bad assumption - status " + statusUuidStr);
         }
         
     }
