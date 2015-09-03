@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>gov.vha.isaac</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>1.9-SNAPSHOT</version>
+		<version>1.9</version>
 	</parent>
 
 	<groupId>gov.vha.isaac.terminology.converters</groupId>
@@ -15,9 +15,8 @@
 	<name>RF2 Converter Mojo</name>
 
 	<properties>
-		<!--term-convert-common-base.version>4.2-SNAPSHOT</term-convert-common-base.version-->
-		<ochre.version>2.31-SNAPSHOT</ochre.version>
-		<isaac-metadata.version>1.33-SNAPSHOT</isaac-metadata.version>
+		<ochre.version>2.31</ochre.version>
+		<isaac-metadata.version>1.33</isaac-metadata.version>
 	</properties>
 
 	<scm>

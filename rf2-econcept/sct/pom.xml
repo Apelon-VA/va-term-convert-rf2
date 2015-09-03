@@ -14,7 +14,7 @@
 	<properties>
 		<sourceData.version>20150731</sourceData.version>
 		<sourceData.inputType>Full</sourceData.inputType>  <!-- Delta, Full, or Snapshot -->
-		<loader.version>2.1-SNAPSHOT</loader.version>
+		<loader.version>2.1</loader.version>
 		<!-- For no classifier, leave this blank-->
 		<resultArtifactClassifier>Full</resultArtifactClassifier>
 	</properties>
