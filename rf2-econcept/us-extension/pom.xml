@@ -3,16 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>gov.vha.isaac.terminology.converters</groupId>
-	<artifactId>term-convert-rf2-econcept-sct</artifactId>
+	<artifactId>term-convert-rf2-econcept-us-extension</artifactId>
 	<!-- this should be set to ${sourceData.version}-loader-${loader.version} but that doesn't appease the maven gods that know best....
 		will leave it as is for now, and ignore the warnings. -->
-	<version>${sourceData.version}-loader-${loader.version}</version>  <!-- Put D, F or S here, if necessary, to get around maven rules when trying to reuse this pom to post snapshot and full, for example. -->
+	<version>${sourceData.version}-loader-${loader.version}</version>
 	<packaging>pom</packaging>
 
 	<name>RF2 eConcept Artifact Generator</name>
 
 	<properties>
-		<sourceData.version>20150731</sourceData.version>
+		<sourceData.version>20150301</sourceData.version>
 		<sourceData.inputType>Full</sourceData.inputType>  <!-- Delta, Full, or Snapshot -->
 		<loader.version>2.2</loader.version>
 		<!-- For no classifier, leave this blank-->
@@ -72,7 +72,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>gov.vha.isaac.terminology.source.rf2</groupId>
-									<artifactId>term-convert-rf2-src-data-sct</artifactId>
+									<artifactId>term-convert-rf2-src-data-us-extension</artifactId>
 									<version>${sourceData.version}</version>
 									<type>zip</type>
 								</artifactItem>
@@ -112,45 +112,33 @@
 				<version>${loader.version}</version>
 				<executions>
 					<execution>
+						<id>sct2-create-placeholder-concepts</id>
+						<goals>
+							<goal>sct2-create-placeholder-concepts</goal>
+						</goals>
+						<configuration>
+							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
+							<effectiveDate>2015-03-01 00:00:00</effectiveDate>
+							<rf2Dirs>
+								<rf2Dir>
+									<directoryName>generated-resources/src/unzipped/${sourceData.inputType}/Terminology</directoryName>
+								</rf2Dir>
+								<rf2Dir>
+									<directoryName>generated-resources/src/unzipped/${sourceData.inputType}/Refset</directoryName>
+								</rf2Dir>
+							</rf2Dirs>
+							<moduleUuid>1650cb73-5cb1-57e7-9834-8f64ba6e41ee</moduleUuid>  <!-- US Extension UUID -->
+						</configuration>
+					</execution>
+					<execution>
 						<id>sct-rf2-conversion first steps</id>
 						<goals>
-							<goal>sct-rf2-uuid-cache-arf-gen</goal>  <!-- This does nothing, but later steps assume the cache file exists -->
-							<goal>sct-rf2-text-definition-to-arf</goal>
-							<!--goal>sct-rf2-to-arf</goal-->
-							<goal>sct-rf2-to-arf-no-status</goal> <!-- overwrites previous? -->
-							<!--goal>sct-rf2-simple-to-arf</goal-->  <!-- This does nothing? -->
-							<goal>sct-rf2-dos-to-arf</goal>
-						</goals>
-						<configuration>
-							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
-						</configuration>
-					</execution>
-					<execution>
-						<id>sct-rf2 conversion second steps</id>
-						<goals>
-							<goal>sct-rf2-refset-c-to-arf</goal>  <!-- Does nothing... -->
-						</goals>
-						<configuration>
-							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
-							<inputFile>der2_cRefset_AssociationReference</inputFile>
-							<!--filters>
-								<param>900000000000530003</param> <!- - ALTERNATIVE- ->
-								<param>900000000000528000</param> <!- - WAS A- ->
-								<param>900000000000526001</param> <!- - REPLACED BY- ->
-								<param>900000000000527005</param> <!- - SAME AS- ->
-								<param>900000000000525002</param> <!- - MOVED FROM- ->
-								<param>900000000000524003</param> <!- - MOVED TO- ->
-								<param>900000000000523009</param> <!- - POSSIBLY EQUIVALENT TO- ->
-							</filters-->
-						</configuration>
-					</execution>
-					<execution>
-						<id>sct-rf2-conversion third steps</id> 
-						<goals>
+							<goal>sct-rf2-uuid-cache-arf-gen</goal>
+							<goal>sct-rf2-to-arf-no-status</goal> 
 							<goal>sct-rf2-lrs-to-arf</goal>
 						</goals>
 						<configuration>
-							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/SnomedCT_RF2Release_INT_${sourceData.version}/${sourceData.inputType}</inputSctDir>
+							<inputSctDir>${project.build.directory}/generated-resources/src/unzipped/${sourceData.inputType}</inputSctDir>
 						</configuration>
 					</execution>
 					<execution>
@@ -160,6 +148,7 @@
 						</goals>
 						<configuration>
 							<useSctRelId>true</useSctRelId>
+							<outputFileName>USExtensionEConcepts.jbin</outputFileName>
 						</configuration>
 					</execution>
 				</executions>
