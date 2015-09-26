@@ -160,7 +160,6 @@
 						</goals>
 						<configuration>
 							<useSctRelId>true</useSctRelId>
-							<rf2Mapping>true</rf2Mapping>
 						</configuration>
 					</execution>
 				</executions>

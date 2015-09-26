@@ -261,9 +261,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
     @Parameter(defaultValue = "false")
     private boolean useSctRelId;
 
-    @Parameter(defaultValue = "false")
-    private boolean rf2Mapping;
-
     /**
      * Directory used to output the econcept format files 
      */
@@ -534,7 +531,7 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
             return 0;
         }
         if (uuid.equals(IsaacMetadataAuxiliaryBinding.PREFERRED.getPrimodialUuid())) {
-            return 1;
+            return 2;  //map preferred to synonym
         }
         else if (uuid.equals(IsaacMetadataAuxiliaryBinding.SYNONYM.getPrimodialUuid())) {
             return 2;
@@ -836,7 +833,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
         statRsConFromArf = 0;
         statRsStrFromArf = 0;
 
-        getLog().info("::: RF2 Mapping: " + rf2Mapping);
         getLog().info("::: Target Directory: " + tDir);
         getLog().info("::: Target Sub Directory:     " + tSubDir);
 
@@ -1290,10 +1286,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
 
             // DESCRIPTION_TYPE = 5;
             int descriptionType = lookupZDesTypeUuidIdx(line[DESCRIPTION_TYPE_UUID]);
-            if (rf2Mapping == true
-                    && (descriptionType == RF1_UNSPECIFIED || descriptionType == RF1_PREFERRED)) {
-                descriptionType = RF1_SYNOMYM;
-            }
             // LANGUAGE_CODE = 6;
             String langCodeStr = line[LANGUAGE_CODE_STR];
             // EFFFECTIVE_DATE = 7;
@@ -5787,10 +5779,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
         int DESCRIPTIONTYPE = 5;
         int LANGUAGECODE = 6;
 
-        int RF1_UNSPECIFIED = 0;
-        int RF1_PREFERRED = 1;
-        int RF1_SYNOMYM = 2;
-
         // Header row
         r.readLine();
 
@@ -5809,9 +5797,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
             int capStatus = Integer.parseInt(line[INITIALCAPITALSTATUS]);
             // DESCRIPTIONTYPE
             int typeInt = Integer.parseInt(line[DESCRIPTIONTYPE]);
-            if (rf2Mapping == true && (typeInt == RF1_UNSPECIFIED || typeInt == RF1_PREFERRED)) {
-                typeInt = RF1_SYNOMYM;
-            }
             // LANGUAGECODE
             String lang = line[LANGUAGECODE];
 
@@ -6408,8 +6393,6 @@ public class Sct1ArfToEConceptMojo extends AbstractMojo {
         switch (type) {
         case 0:
             return IsaacMetadataAuxiliaryBinding.DEFINITION_DESCRIPTION_TYPE.getPrimodialUuid();
-        case 1:
-            return IsaacMetadataAuxiliaryBinding.PREFERRED.getPrimodialUuid();
         case 2:
             return IsaacMetadataAuxiliaryBinding.SYNONYM.getPrimodialUuid();
         case 3:
