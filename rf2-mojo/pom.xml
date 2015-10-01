@@ -15,8 +15,8 @@
 	<name>RF2 Converter Mojo</name>
 
 	<properties>
-		<ochre.version>2.34-SNAPSHOT</ochre.version>
-		<isaac-metadata.version>1.37-SNAPSHOT</isaac-metadata.version>
+		<ochre.version>2.35-SNAPSHOT</ochre.version>
+		<isaac-metadata.version>1.38-SNAPSHOT</isaac-metadata.version>
 	</properties>
 
 	<scm>
