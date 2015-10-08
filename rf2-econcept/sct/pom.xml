@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>gov.vha.isaac.terminology.converters</groupId>
+	<parent>
+		<groupId>gov.vha.isaac.terminology.converters</groupId>
+		<artifactId>term-convert-RF2-econcept</artifactId>
+		<version>Test-RF2-2.0-SNAPSHOT</version>
+	</parent>
+<!--	<groupId>gov.vha.isaac.terminology.converters</groupId> -->
 	<artifactId>term-convert-rf2-econcept-sct</artifactId>
 	<!-- this should be set to ${sourceData.version}-loader-${loader.version} but that doesn't appease the maven gods that know best....
 		will leave it as is for now, and ignore the warnings. -->
-	<version>${sourceData.version}-loader-${loader.version}</version>  <!-- Put D, F or S here, if necessary, to get around maven rules when trying to reuse this pom to post snapshot and full, for example. -->
+<!--	<version>${sourceData.version}-loader-${loader.version}</version>  Put D, F or S here, if necessary, to get around maven rules when trying to reuse this pom to post snapshot and full, for example. -->
 	<packaging>pom</packaging>
 
 	<name>RF2 eConcept Artifact Generator</name>
